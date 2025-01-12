@@ -1,0 +1,36 @@
+# Node.js dependencies
+node_modules/
+
+# Optional npm cache directory
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build directories
+dist/
+build/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# IDEs and editor folders
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Dependency directory for Yarn
+.yarn/
+
+# Optional coverage directory
+coverage/
+
+# Optional directory for serverless framework
+.serverless/
