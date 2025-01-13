@@ -112,7 +112,7 @@ export const createProduct = async (
   ) {
     return reply.status(422).send({
       error: "Validation Error",
-      message: "Title, SKU, Image, Description, Stock and Price are required.",
+      message: "Title, SKU, Image, Description and Price are required.",
     });
   }
 

@@ -30,13 +30,13 @@ export const getTransactions = async (
 
     const transaction: TransactionResponse[] =
       await database.any<TransactionResponse>(
-        "SELECT adjustment_transactions.id, products.sku, adjustment_transactions.qty, adjustment_transactions.amount FROM adjustment_transactions LEFT JOIN products ON products.id = adjustment_transactions.product_id WHERE (products.sku ILIKE $1 OR products.title ILIKE $2) AND products.deleted_at IS NULL AND adjustment_transactions.deleted_at IS NULL ORDER BY adjustment_transactions.updated_at DESC LIMIT $3 OFFSET $4",
-        [formattedKeyword, formattedKeyword, limit, offset]
+        "SELECT adjustment_transactions.id, products.sku, adjustment_transactions.qty, adjustment_transactions.amount FROM adjustment_transactions LEFT JOIN products ON products.id = adjustment_transactions.product_id WHERE (products.sku ILIKE $1) AND products.deleted_at IS NULL AND adjustment_transactions.deleted_at IS NULL ORDER BY adjustment_transactions.updated_at DESC LIMIT $2 OFFSET $3",
+        [formattedKeyword, limit, offset]
       );
 
     const getTotalData = await database.one(
-      "SELECT COUNT(*) FROM adjustment_transactions LEFT JOIN products ON products.id = adjustment_transactions.product_id WHERE (products.sku ILIKE $1 OR products.title ILIKE $2) AND adjustment_transactions.deleted_at IS NULL AND products.deleted_at IS NULL",
-      [formattedKeyword, formattedKeyword]
+      "SELECT COUNT(*) FROM adjustment_transactions LEFT JOIN products ON products.id = adjustment_transactions.product_id WHERE (products.sku ILIKE $1) AND adjustment_transactions.deleted_at IS NULL AND products.deleted_at IS NULL",
+      [formattedKeyword]
     );
 
     const totalData = parseInt(getTotalData.count, 10);
@@ -99,7 +99,7 @@ export const createTransaction = async (
   };
 
   if (!transaction.sku || (!transaction.qty && transaction.qty !== 0)) {
-    return reply.status(412).send({
+    return reply.status(422).send({
       error: "Validation Error",
       message: "SKU, and Qty are required.",
     });
@@ -112,7 +112,7 @@ export const createTransaction = async (
       ]);
 
       if (!product) {
-        return reply.status(412).send({
+        return reply.status(422).send({
           error: "Validation Error",
           message: `Product with SKU "${transaction.sku}" is not found.`,
         });
@@ -121,7 +121,7 @@ export const createTransaction = async (
       var stock = product.stock + transaction.qty;
 
       if (product.stock === 0 || stock < 1) {
-        return reply.status(412).send({
+        return reply.status(422).send({
           error: "Validation Error",
           message: `Product with SKU "${product.sku}" is currently unavailable.`,
         });
@@ -170,7 +170,7 @@ export const updateTransaction = async (
   const { id } = request.params as { id: number };
 
   if ((!transaction.qty && transaction.qty !== 0) || !id) {
-    return reply.status(412).send({
+    return reply.status(422).send({
       error: "Validation Error",
       message: "SKU, and Qty are required.",
     });
@@ -201,9 +201,9 @@ export const updateTransaction = async (
       );
 
       if (!newProduct) {
-        return reply.status(412).send({
+        return reply.status(422).send({
           error: "Validation Error",
-          message: `Product with SKU "${newProduct.sku}" is not found.`,
+          message: `Product with SKU "${transaction.sku}" is not found.`,
         });
       }
 
@@ -215,7 +215,7 @@ export const updateTransaction = async (
           (newProduct.stock === 0 ||
             newProduct.stock + dataTransaction.qty < 1))
       ) {
-        return reply.status(412).send({
+        return reply.status(422).send({
           error: "Validation Error",
           message: `Product with SKU "${newProduct.sku}" is currently unavailable.`,
         });

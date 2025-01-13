@@ -1,0 +1,610 @@
+openapi: "3.0.0"
+info:
+  title: "Ecommerce API"
+  version: "1.0.0"
+  description: "API documentation for managing products and transactions"
+servers:
+  - url: "http://localhost:8080/api/v1"
+    description: "Local server"
+paths:
+  /products:
+    get:
+      tags:
+        - Product
+      summary: "Get a list of products"
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          example: 8
+        - name: page
+          in: query
+          schema:
+            type: integer
+          example: 1
+        - name: keyword
+          in: query
+          schema:
+            type: string
+          example: "testing"
+      responses:
+        200:
+          description: "List of products"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 214
+                        title:
+                          type: string
+                          example: "Testing"
+                        sku:
+                          type: string
+                          example: "TT001"
+                        image:
+                          type: string
+                          example: "testing"
+                        price:
+                          type: string
+                          example: "20000.00"
+                        stock:
+                          type: integer
+                          example: 0
+                  total_data:
+                    type: integer
+                    example: 5
+                  page:
+                    type: string
+                    example: "1"
+                  total_page:
+                    type: integer
+                    example: 1
+    post:
+      tags:
+        - Product
+      summary: "Create a product"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: "Testing"
+                sku:
+                  type: string
+                  example: "TT001"
+                image:
+                  type: string
+                  example: "testing"
+                price:
+                  type: number
+                  example: 20000
+                description:
+                  type: string
+                  example: "testing"
+              required:
+                - title
+                - sku
+                - image
+                - price
+                - description
+      responses:
+        200:
+          description: "Product created successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product created successfully"
+                  data:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                        example: "Testing"
+                      sku:
+                        type: string
+                        example: "TT001"
+                      image:
+                        type: string
+                        example: "testing"
+                      price:
+                        type: number
+                        example: 20000
+                      description:
+                        type: string
+                        example: "testing"
+        422:
+          description: "Validation Error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Validation Error"
+                  message:
+                    type: string
+                    example: "Title, SKU, Image, Description and Price are required."
+  /products/{id}:
+    get:
+      tags:
+        - Product
+      summary: "Get product details"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 194
+      responses:
+        200:
+          description: "Product retrieved successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product retrieved successfully"
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 194
+                      title:
+                        type: string
+                        example: "Women's Wrist Watch"
+                      sku:
+                        type: string
+                        example: "36T6X4M3"
+                      image:
+                        type: string
+                        example: "https://cdn.dummyjson.com/products/images/womens-watches/Women's%20Wrist%20Watch/1.png"
+                      price:
+                        type: string
+                        example: "129.99"
+                      stock:
+                        type: integer
+                        example: 50
+                      description:
+                        type: string
+                        example: "The Women's Wrist Watch is a versatile and fashionable timepiece for everyday wear. With a comfortable strap and a simple yet elegant design, it complements various styles."
+        404:
+          description: "Product not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product not found"
+                  data:
+                    type: object
+    put:
+      tags:
+        - Product
+      summary: "Update product"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 197
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: "Testing1"
+                sku:
+                  type: string
+                  example: "TT5"
+                image:
+                  type: string
+                  example: "testing2"
+                price:
+                  type: number
+                  example: 30000
+                description:
+                  type: string
+                  example: "testing2"
+              required:
+                - title
+                - sku
+                - image
+                - price
+                - description
+      responses:
+        200:
+          description: "Product updated successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product updated successfully"
+                  data:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                        example: "Testing1"
+                      sku:
+                        type: string
+                        example: "TT001"
+                      image:
+                        type: string
+                        example: "testing2"
+                      price:
+                        type: number
+                        example: 30000
+                      description:
+                        type: string
+                        example: "testing"
+        404:
+          description: "Product not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product not found"
+                  data:
+                    type: object
+    delete:
+      tags:
+        - Product
+      summary: "Delete product"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 196
+      responses:
+        200:
+          description: "Product deleted successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product deleted successfully"
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "214"
+        404:
+          description: "Product not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product not found"
+                  data:
+                    type: object
+  /products/fetch:
+    get:
+      tags:
+        - Product
+      summary: "Fetch products"
+      responses:
+        200:
+          description: "Products fetched successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product fetched successfully"
+
+  /transactions:
+    get:
+      tags:
+        - Transaction
+      summary: "Get a list of transactions"
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+          example: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          example: 10
+        - name: keyword
+          in: query
+          schema:
+            type: string
+          example: "CBO"
+      responses:
+        200:
+          description: "List of transactions"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 20
+                        sku:
+                          type: string
+                          example: "CBO6BLYV"
+                        qty:
+                          type: integer
+                          example: 5
+                        amount:
+                          type: string
+                          example: "99.95"
+                  total_data:
+                    type: integer
+                    example: 1
+                  page:
+                    type: string
+                    example: "1"
+                  total_page:
+                    type: integer
+                    example: 1
+    post:
+      tags:
+        - Transaction
+      summary: "Create a transaction"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sku:
+                  type: string
+                  example: "36T6X4M3"
+                qty:
+                  type: integer
+                  example: 2
+              required:
+                - sku
+                - qty
+      responses:
+        200:
+          description: "Transaction created successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Transaction created successfully"
+                  data:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                        example: "Women's Wrist Watch"
+                      sku:
+                        type: string
+                        example: "36T6X4M3"
+                      qty:
+                        type: integer
+                        example: 2
+                      amount:
+                        type: number
+                        example: 259.98
+        422:
+          description: "Validation Error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Validation Error"
+                  message:
+                    type: string
+                    example: "SKU, and Qty are required."
+  /transactions/{id}:
+    get:
+      tags:
+        - Transaction
+      summary: "Get transaction details"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 334
+      responses:
+        200:
+          description: "Transaction retrieved successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Transaction retrieved successfully"
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 20
+                      sku:
+                        type: string
+                        example: "CBO6BLYV"
+                      qty:
+                        type: integer
+                        example: 5
+                      amount:
+                        type: string
+                        example: "99.95"
+        404:
+          description: "Transaction not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Transaction not found"
+                  data:
+                    type: object
+    put:
+      tags:
+        - Transaction
+      summary: "Update transaction"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 18
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sku:
+                  type: string
+                  example: "0ENL5IX6"
+                qty:
+                  type: integer
+                  example: 2
+              required:
+                - sku
+                - qty
+      responses:
+        200:
+          description: "Transaction updated successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Transaction updated successfully"
+                  data:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                        example: "MotoGP CI.H1"
+                      sku:
+                        type: string
+                        example: "0ENL5IX6"
+                      qty:
+                        type: integer
+                        example: 2
+                      amount:
+                        type: number
+                        example: 29999.98
+        422:
+          description: "Validation Error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Validation Error"
+                  message:
+                    type: string
+                    example: 'Product with SKU "0ENL56" is not found.'
+    delete:
+      tags:
+        - Transaction
+      summary: "Delete transaction"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 2
+      responses:
+        200:
+          description: "Transaction deleted successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Transaction deleted successfully"
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "20"
+        404:
+          description: "Transaction not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Transaction not found"
+                  data:
+                    type: object
