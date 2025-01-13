@@ -10,12 +10,15 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@fastify/rate-limit": "^10.2.2",
+    "@types/sanitize-html": "^2.13.0",
     "typescript": "^5.7.3"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.2",
     "dotenv": "^16.4.7",
     "fastify": "^5.2.1",
-    "pg-promise": "^11.10.2"
+    "pg-promise": "^11.10.2",
+    "sanitize-html": "^2.14.0"
   }
 }

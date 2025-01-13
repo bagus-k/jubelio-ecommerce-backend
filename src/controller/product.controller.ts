@@ -1,5 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import database from "../database/postgres.database";
+import sanitize from "sanitize-html";
 
 type ProductResponse = {
   id: number;
@@ -8,7 +9,17 @@ type ProductResponse = {
   image: string;
   price: number;
   stock: number;
+  description: string;
 };
+
+interface ProductRequest {
+  id: number;
+  title: string;
+  sku: string;
+  image: string;
+  price: number;
+  description: string;
+}
 
 export const getProducts = async (
   request: FastifyRequest,
@@ -24,12 +35,13 @@ export const getProducts = async (
     const formattedKeyword = `%${keyword}%`;
 
     const products: ProductResponse[] = await database.any<ProductResponse>(
-      "SELECT id, title, sku, image, price, stock FROM products where title ILIKE $1 AND deleted_at IS NULL ORDER BY updated_at DESC LIMIT $2 OFFSET $3",
-      [formattedKeyword, limit, offset]
+      "SELECT id, title, sku, image, price, stock FROM products WHERE (title ILIKE $1 OR sku ILIKE $2) AND deleted_at IS NULL ORDER BY updated_at DESC LIMIT $3 OFFSET $4",
+      [formattedKeyword, formattedKeyword, limit, offset]
     );
 
     const getTotalData = await database.one(
-      "SELECT COUNT(*) FROM products WHERE deleted_at IS NULL"
+      "SELECT COUNT(*) FROM products WHERE (title ILIKE $1 OR sku ILIKE $2) AND deleted_at IS NULL",
+      [formattedKeyword, formattedKeyword]
     );
 
     const totalData = parseInt(getTotalData.count, 10);
@@ -80,28 +92,27 @@ export const getDetailProduct = async (
 };
 
 export const createProduct = async (
-  request: FastifyRequest,
+  request: FastifyRequest<{ Body: ProductRequest }>,
   reply: FastifyReply
 ) => {
-  const product = request.body as {
-    title: string;
-    sku: string;
-    image: string;
-    price: number;
-    description?: string;
-    stock: number;
+  const product = {
+    title: sanitize(request.body.title || ""),
+    sku: sanitize(request.body.sku || ""),
+    image: sanitize(request.body.image || ""),
+    price: request.body.price,
+    description: sanitize(request.body.description || ""),
   };
 
   if (
     !product.title ||
     !product.sku ||
     !product.image ||
-    !product.price ||
-    !product.stock
+    (!product.price && product.price !== 0) ||
+    !product.description
   ) {
     return reply.status(422).send({
       error: "Validation Error",
-      message: "Title, SKU, Image, Stock and Price are required.",
+      message: "Title, SKU, Image, Description, Stock and Price are required.",
     });
   }
 
@@ -120,14 +131,13 @@ export const createProduct = async (
       }
 
       await t.result(
-        "INSERT INTO products (title, sku, image, price, description, stock, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())",
+        "INSERT INTO products (title, sku, image, price, description, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())",
         [
           product.title,
           product.sku,
           product.image,
           product.price,
-          product.description || null,
-          product.stock,
+          product.description,
         ]
       );
 
@@ -146,15 +156,15 @@ export const createProduct = async (
 };
 
 export const updateProduct = async (
-  request: FastifyRequest,
+  request: FastifyRequest<{ Body: ProductRequest }>,
   reply: FastifyReply
 ) => {
-  const product = request.body as {
-    title: string;
-    sku: string;
-    image: string;
-    price: number;
-    description?: string;
+  const product = {
+    title: sanitize(request.body.title || ""),
+    sku: sanitize(request.body.sku || ""),
+    image: sanitize(request.body.image || ""),
+    price: request.body.price,
+    description: sanitize(request.body.description || ""),
   };
 
   const { id } = request.params as { id: number };
@@ -164,11 +174,12 @@ export const updateProduct = async (
     !product.sku ||
     !product.image ||
     !product.price ||
+    !product.description ||
     !id
   ) {
     return reply.status(422).send({
       error: "Validation Error",
-      message: "Title, SKU, Image, and Price are required.",
+      message: "Title, SKU, Image, Description and Price are required.",
     });
   }
 
