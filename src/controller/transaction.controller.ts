@@ -118,7 +118,7 @@ export const createTransaction = async (
         });
       }
 
-      var stock = product.stock + transaction.qty;
+      const stock = product.stock + transaction.qty;
 
       if (product.stock + transaction.qty < 0) {
         return reply.status(422).send({
@@ -127,7 +127,7 @@ export const createTransaction = async (
         });
       }
 
-      var amount = product.price * transaction.qty;
+      const amount = product.price * transaction.qty;
 
       await t.result(
         "INSERT INTO adjustment_transactions (product_id, qty, amount, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW())",
@@ -219,14 +219,14 @@ export const updateTransaction = async (
         });
       }
 
-      var amount = newProduct.price * transaction.qty;
+      const amount = newProduct.price * transaction.qty;
 
       await t.result(
         "UPDATE adjustment_transactions SET qty = $1, amount = $2, product_id = $3, updated_at = NOW() WHERE id = $4 AND deleted_at IS NULL",
         [transaction.qty, amount, newProduct.id, id]
       );
 
-      var stock: number = 0;
+      let stock: number = 0;
 
       if (oldProduct.sku === newProduct.sku) {
         stock = newProduct.stock + (transaction.qty - dataTransaction.qty);

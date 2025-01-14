@@ -1,4 +1,4 @@
-import Fastify from "fastify";
+import Fastify, { FastifyRequest } from "fastify";
 import cors from "@fastify/cors";
 import { config } from "./config/db";
 import productRoutes from "./routes/product.route";
@@ -20,7 +20,7 @@ app.register(cors, {
 app.register(fastifyRateLimit, {
   max: config.rateLimiter.max,
   timeWindow: "1 minute",
-  keyGenerator: (req: { ip: any }) => req.ip,
+  keyGenerator: (req: FastifyRequest) => req.ip,
   errorResponseBuilder: () => ({
     statusCode: 429,
     error: "Too Many Requests",
