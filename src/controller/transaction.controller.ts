@@ -120,7 +120,7 @@ export const createTransaction = async (
 
       var stock = product.stock + transaction.qty;
 
-      if (product.stock === 0 || stock < 1) {
+      if (product.stock + transaction.qty < 0) {
         return reply.status(422).send({
           error: "Validation Error",
           message: `Product with SKU "${product.sku}" is currently unavailable.`,
@@ -209,11 +209,9 @@ export const updateTransaction = async (
 
       if (
         (oldProduct.sku === newProduct.sku &&
-          (newProduct.stock === 0 ||
-            newProduct.stock + (transaction.qty - dataTransaction.qty) < 1)) ||
+          newProduct.stock + (dataTransaction.qty - transaction.qty) < 0) ||
         (oldProduct.sku !== newProduct.sku &&
-          (newProduct.stock === 0 ||
-            newProduct.stock + dataTransaction.qty < 1))
+          newProduct.stock + transaction.qty < 0)
       ) {
         return reply.status(422).send({
           error: "Validation Error",

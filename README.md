@@ -64,6 +64,7 @@ For detailed API documentation, refer to the Swagger docs located in the `docs` 
 - **pg-promise**: A promise-based PostgreSQL query builder.
 - **sanitize-html**: A library for sanitizing HTML content to prevent XSS attacks.
 - **@fastify/cors**: Fastify plugin for handling Cross-Origin Resource Sharing (CORS).
+- **PostgreSQL**: Primary database.
 
 ---
 
@@ -88,4 +89,8 @@ For detailed API documentation, refer to the Swagger docs located in the `docs` 
 5. To start the server in development mode, use:
    ```bash
    npm run dev
+   ```
+6. To run test, use:
+   ```bash
+   npm run test
    ```

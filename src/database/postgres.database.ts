@@ -7,9 +7,9 @@ const db = pgPromise()({
   database: config.database.database,
   user: config.database.username,
   password: config.database.password,
-  // max: config.database.max_open,
-  // idleTimeoutMillis: config.database.max_idle,
-  // connectionTimeoutMillis: config.database.timeout,
+  max: config.database.max_open,
+  idleTimeoutMillis: config.database.max_idle,
+  connectionTimeoutMillis: config.database.timeout,
 });
 
 db.connect()

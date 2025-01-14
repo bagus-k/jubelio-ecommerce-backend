@@ -34,3 +34,5 @@ coverage/
 
 # Optional directory for serverless framework
 .serverless/
+
+.tap/
