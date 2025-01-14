@@ -20,7 +20,7 @@ The ECommerce API is a system for managing products and transaction.
 ### **Transactions**
 
 - GET `/api/v1/transactions`: Fetch a list of transactions with optional pagination (query parameters: page, limit).
-- GET `/api/v1/transactions/`:id: Fetch detailed information about a specific transaction.
+- GET `/api/v1/transactions/:id`: Fetch detailed information about a specific transaction.
 - POST `/api/v1/transactions`: Create a new transaction.
 - PUT `/api/v1/transactions/:id`: Update a specific transaction.
 - DELETE `/api/v1/transactions/:id`: Delete a specific transaction.
