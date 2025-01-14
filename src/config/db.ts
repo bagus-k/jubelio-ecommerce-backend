@@ -18,6 +18,9 @@ interface Config {
     max_open: number;
     timeout: number;
   };
+  rateLimiter: {
+    max: number;
+  };
 }
 
 export const config: Config = {
@@ -35,5 +38,8 @@ export const config: Config = {
     max_idle: parseInt(process.env.DB_MAX_IDLE || "30000") || 10,
     max_open: parseInt(process.env.DB_MAX_OPEN || "100") || 100,
     timeout: parseInt(process.env.DB_TIMEOUT || "2000") || 2000,
+  },
+  rateLimiter: {
+    max: parseInt(process.env.RATE_LIMITER_MAX || "100") || 100,
   },
 };

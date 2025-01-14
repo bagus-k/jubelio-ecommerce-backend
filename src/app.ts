@@ -18,7 +18,7 @@ app.register(cors, {
 });
 
 app.register(fastifyRateLimit, {
-  max: 100,
+  max: config.rateLimiter.max,
   timeWindow: "1 minute",
   keyGenerator: (req: { ip: any }) => req.ip,
   errorResponseBuilder: () => ({
